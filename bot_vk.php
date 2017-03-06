@@ -20,7 +20,7 @@ if (!isset($_REQUEST))
     $confirmation_token = '12a75f3a';
 
 //Ключ сообщества
-$token = 'fb58547d2c74b5e0f58a7ff2edcf3afabd3cfad5685778d5350cbb17d67251e5f77086301e11330e739db';
+$token = '';
 
 $data = json_decode(file_get_contents('php://input'));
 
