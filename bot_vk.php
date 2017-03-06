@@ -20,63 +20,61 @@ if (!isset($_REQUEST))
     $confirmation_token = '12a75f3a';
 
 //Ключ сообщества
-    $token = 'fb58547d2c74b5e0f58a7ff2edcf3afabd3cfad5685778d5350cbb17d67251e5f77086301e11330e739db';
+$token = 'fb58547d2c74b5e0f58a7ff2edcf3afabd3cfad5685778d5350cbb17d67251e5f77086301e11330e739db';
 
-    $data = json_decode(file_get_contents('php://input'));
+$data = json_decode(file_get_contents('php://input'));
 
-    switch ($data->type) {
-        case 'confirmation':
-            echo $confirmation_token;
-            break;
+switch ($data->type) {
+    case 'confirmation':
+        echo $confirmation_token;
+        break;
 
-        case 'message_allow':
-            $user_id = $data->object->user_id;
-            $user_info = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_ids={$user_id}&v=5.0"));
+    case 'message_allow':
+        $user_id = $data->object->user_id;
+        $user_info = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_ids={$user_id}&v=5.0"));
 
-            $user_name = $user_info->response[0]->first_name;
-            $id = $user_info->response[0]->id;
+        $user_name = $user_info->response[0]->first_name;
+        $id = $user_info->response[0]->id;
 
-            $request_params = array(
-                'message' => "
-                Привет, {$user_name}!
-                Спасибо что вы подписались на нашего бота.
-                Теперь вы можете получать уведомения о новых событиях города!
-                Список команд: !events
-                
-                
-                ",
-                'user_id' => $user_id,
-                'access_token' => $token,
-                'v' => '5.0'
-            );
+        $request_params = array(
+            'message' => "
+             Привет, {$user_name}!
+             Спасибо что вы подписались на нашего бота.
+             Теперь вы можете получать уведомения о новых событиях города!
+             Список команд: !events
+             ",
+             'user_id' => $user_id,
+             'access_token' => $token,
+             'v' => '5.0'
+        );
 
-            $get_params = http_build_query($request_params);
+        $get_params = http_build_query($request_params);
 
-            file_get_contents('https://api.vk.com/method/messages.send?'. $get_params);
+        file_get_contents('https://api.vk.com/method/messages.send?' . $get_params);
+        break;
 
+    case 'message_new':
+        $message = '123';
+        send_msg($message, $data, $token);
 
-        case 'message_new':
-            $user_id = $data->object->user_id;
-            $user_info = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_ids={$user_id}&v=5.0"));
+        break;
 
-            $user_name = $user_info->response[0]->first_name;
-
-            $request_params = array(
-                'message' => "
-                Привет, {$user_name}!
-                Что бы воспользоваться ботом введи: !events или !события
-                ",
-                'user_id' => $user_id,
-                'access_token' => $token,
-                'v' => '5.0'
-            );
-
-            $get_params = http_build_query($request_params);
-
-            file_get_contents('https://api.vk.com/method/messages.send?'. $get_params);
-
-            echo('ok');
-
-            break;
 }
-?>
+
+function send_msg($msg, $data, $token)
+{
+    $user_id = $data->object->user_id;
+
+    $request_params = array(
+        'message' => $msg,
+        'user_id' => $user_id,
+        'access_token' => $token,
+        'v' => '5.0'
+    );
+
+    $get_params = http_build_query($request_params);
+
+    file_get_contents('https://api.vk.com/method/messages.send?' . $get_params);
+
+    echo('ok');
+}
