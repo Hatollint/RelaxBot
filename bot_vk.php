@@ -58,7 +58,6 @@ switch ($data->type) {
         send_msg($message, $data, $token);
 
         break;
-
 }
 
 function send_msg($msg, $data, $token)
@@ -75,6 +74,6 @@ function send_msg($msg, $data, $token)
     $get_params = http_build_query($request_params);
 
     file_get_contents('https://api.vk.com/method/messages.send?' . $get_params);
-
+    // для работы callback'а
     echo('ok');
 }
